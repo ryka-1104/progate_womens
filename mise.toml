@@ -1,3 +1,11 @@
 [tools]
 flutter = "3.38.9"
 ruby = "4.0"
+
+[tasks."ios:install"]
+run = "bundle install"
+dir = "ios"
+
+[tasks."ios:match"]
+run = "bundle exec fastlane match development --readonly"
+dir = "ios"
