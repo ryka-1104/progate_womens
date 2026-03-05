@@ -5,8 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:progate_womens/camera.dart';
 import 'package:progate_womens/main.dart';
 
 void main() {
@@ -15,14 +15,14 @@ void main() {
   ) async {
     await tester.pumpWidget(const MainApp());
 
-    expect(find.text('ホーム画面'), findsOneWidget);
+    expect(find.byType(QRScanOnlyPage), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.photo_camera));
+    await tester.tap(find.text('スタンプ'));
     await tester.pump();
-    expect(find.text('QRコードを読み取ってください'), findsOneWidget);
+    expect(find.text('スタンプ画面（仮）'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.list));
+    await tester.tap(find.text('お土産'));
     await tester.pump();
-    expect(find.text('リスト項目 1'), findsOneWidget);
+    expect(find.text('お土産画面（仮）'), findsOneWidget);
   });
 }
