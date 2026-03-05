@@ -5,25 +5,24 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:progate_womens/home.dart';
+import 'package:progate_womens/camera.dart';
+import 'package:progate_womens/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyHomeApp());
+  testWidgets('Bottom navigation switches between 3 screens', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MainApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.byType(QRScanOnlyPage), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.tap(find.text('スタンプ'));
     await tester.pump();
+    expect(find.text('スタンプ画面（仮）'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('お土産'));
+    await tester.pump();
+    expect(find.text('お土産画面（仮）'), findsOneWidget);
   });
 }
