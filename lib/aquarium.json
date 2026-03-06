@@ -1,6 +1,10 @@
 {
   "exhibit_attributes": [
-    { "id": "c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41", "name": "クラゲ" }
+    { "id": "c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41", "name": "クラゲ" },
+    { "id": "7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10", "name": "ジンベイザメ" },
+    { "id": "2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44", "name": "チンアナゴ" },
+    { "id": "9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33", "name": "ヒトデ" },
+    { "id": "4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55", "name": "ペンギン" }
   ],
   "exhibits": [
     {
@@ -9,6 +13,34 @@
       "image": "assets/images/exhibits/exhibit_1.jpg",
       "description": "幻想的に漂うクラゲの生態を紹介する展示です。",
       "linked_goods_ids": ["a7b2e6f4-1d93-4c5a-8f70-2c9e4b6d8a55"]
+    },
+    {
+      "id": "1e6b7c2a-9d4f-4e8b-8a3c-5f7d2e1a9b60",
+      "name": "ジンベイザメ展示",
+      "image": "assets/images/exhibits/exhibit_2.jpg",
+      "description": "世界最大の魚であるジンベイザメの特徴や生態を紹介する展示です。",
+      "linked_goods_ids": ["b3c7d9a1-6e2f-4c8a-9d5b-1f7a2e6c4d90"]
+    },
+    {
+      "id": "5c2e7a9d-1b6f-4c3a-8d9e-2f4a7b1c6d11",
+      "name": "チンアナゴ展示",
+      "image": "assets/images/exhibits/exhibit_3.jpg",
+      "description": "砂から顔を出すユニークな姿で人気のチンアナゴを紹介します。",
+      "linked_goods_ids": ["c9d2a7b5-3e6f-4c8d-9a1b-2e7c5d6a3f44"]
+    },
+    {
+      "id": "8a3d1c7e-4f2b-4c6a-9d5e-7b2a1c9f6e33",
+      "name": "ヒトデ展示",
+      "image": "assets/images/exhibits/exhibit_4.jpg",
+      "description": "海の底でゆっくりと生活するヒトデの不思議な体の仕組みを紹介します。",
+      "linked_goods_ids": ["d4e6c2a9-7b1f-4c8d-9e3a-6f2b7c1a5d88"]
+    },
+    {
+      "id": "6f4b2c1e-9d7a-4c8a-8e3f-1b5a2d6c9e77",
+      "name": "ペンギン展示",
+      "image": "assets/images/exhibits/exhibit_5.jpg",
+      "description": "泳ぎが得意な海鳥ペンギンの暮らしや行動を紹介する展示です。",
+      "linked_goods_ids": ["e1a7c9d4-5b2f-4c8e-9d3a-7f6b1c2e4a55"]
     }
   ],
   "goods": [
@@ -19,6 +51,38 @@
       "price": 1200,
       "image": "assets/images/goods/goods_1.jpg",
       "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41"]
+    },
+    {
+      "id": "b3c7d9a1-6e2f-4c8a-9d5b-1f7a2e6c4d90",
+      "name": "ジンベイザメぬいぐるみ",
+      "category": "お土産",
+      "price": 2500,
+      "image": "assets/images/goods/goods_2.jpg",
+      "exhibit_attribute_ids": ["7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10"]
+    },
+    {
+      "id": "c9d2a7b5-3e6f-4c8d-9a1b-2e7c5d6a3f44",
+      "name": "チンアナゴぬいぐるみ",
+      "category": "お土産",
+      "price": 1800,
+      "image": "assets/images/goods/goods_3.jpg",
+      "exhibit_attribute_ids": ["2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44"]
+    },
+    {
+      "id": "d4e6c2a9-7b1f-4c8d-9e3a-6f2b7c1a5d88",
+      "name": "ヒトデマグネット",
+      "category": "お土産",
+      "price": 900,
+      "image": "assets/images/goods/goods_4.jpg",
+      "exhibit_attribute_ids": ["9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33"]
+    },
+    {
+      "id": "e1a7c9d4-5b2f-4c8e-9d3a-7f6b1c2e4a55",
+      "name": "ペンギンキーホルダー",
+      "category": "お土産",
+      "price": 1300,
+      "image": "assets/images/goods/goods_5.jpg",
+      "exhibit_attribute_ids": ["4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55"]
     }
   ]
 }
