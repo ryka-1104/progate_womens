@@ -46,6 +46,14 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
               }
             },
           ),
+          Center(
+            child: Image.asset(
+              'lib/assets/modal_backlog.png',
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
 
           if (exhibitName != null)
             Center(
