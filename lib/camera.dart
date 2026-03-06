@@ -31,17 +31,18 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
               final barcode = capture.barcodes.first;
               final value = barcode.rawValue;
 
-              if (value != null) {
-                _detected = true;
-
-                /// UUID検索
-                if (exhibitMap.containsKey(value)) {
-                  setState(() {
-                    exhibitName = exhibitMap[value];
-                  });
-                }
-
+              if (value != null && exhibitMap.containsKey(value)) {
+                setState(() {
+                  _detected = true;
+                  exhibitName = exhibitMap[value];
+                });
                 widget.onDetected(value);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('このQRコードは登録されていません。もう一度お試しください。'),
+                  ),
+                );
               }
             },
           ),
