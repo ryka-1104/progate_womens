@@ -10,10 +10,9 @@ Future<Map<String, dynamic>> _loadAquariumJson() async {
 }
 
 /// 未収集スタンプ用の魚画像パス。
-/// 魚の画像を用意する場合: 画像を lib/assets/images/stamps/ に配置し、
-/// 以下のファイル名にしてください（例: uncollected_fish.png）。
-/// 画像がない場合はアイコンで表示されます。
-const _uncollectedStampImagePath = 'lib/assets/images/stamps/uncollected_fish.png';
+/// `lib/assets/images/stamps/fish.png` を表示します。
+/// 画像が存在しない場合はアイコンで表示されます。
+const _uncollectedStampImagePath = 'lib/assets/images/stamps/fish.png';
 
 /// 「集めた生き物たち」スタンプ一覧画面。
 /// aquarium.json の exhibits と StampService の収集状態を連携して表示します。
@@ -29,8 +28,6 @@ class _StampListPageState extends State<StampListPage> {
   Set<String> _collectedIds = {};
   bool _loading = true;
   String? _error;
-  /// 未収集用の魚画像が assets に存在するか
-  bool _hasUncollectedImage = false;
 
   @override
   void initState() {
@@ -48,14 +45,9 @@ class _StampListPageState extends State<StampListPage> {
       final exhibits =
           (json['exhibits'] as List).cast<Map<String, dynamic>>();
       final ids = await StampService.getCollectedIds();
-      final hasImage = await rootBundle
-          .load(_uncollectedStampImagePath)
-          .then((_) => true)
-          .catchError((_, __) => false);
       setState(() {
         _exhibits = exhibits;
         _collectedIds = ids.toSet();
-        _hasUncollectedImage = hasImage;
         _loading = false;
       });
     } catch (e) {
@@ -138,7 +130,6 @@ class _StampListPageState extends State<StampListPage> {
                                   shortName: _shortName(name),
                                   collected: collected,
                                   stampImagePath: stampImagePath,
-                                  useCustomUncollectedImage: _hasUncollectedImage,
                                   onTap: () {
                                     // タップで詳細ダイアログなどを開く場合はここで
                                   },
@@ -164,15 +155,12 @@ class _StampGridItem extends StatelessWidget {
     required this.shortName,
     required this.collected,
     required this.stampImagePath,
-    this.useCustomUncollectedImage = false,
     this.onTap,
   });
 
   final String shortName;
   final bool collected;
   final String? stampImagePath;
-  /// 未収集時に魚画像（uncollected_fish.png）を使うか。false のときはアイコン表示
-  final bool useCustomUncollectedImage;
   final VoidCallback? onTap;
 
   @override
@@ -181,9 +169,9 @@ class _StampGridItem extends StatelessWidget {
         ? Image.asset(
             stampImagePath!,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => _placeholderImage(useCustomImage: false),
+            errorBuilder: (_, __, ___) => _placeholderImage(),
           )
-        : _placeholderImage(useCustomImage: useCustomUncollectedImage);
+        : _placeholderImage();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -212,26 +200,10 @@ class _StampGridItem extends StatelessWidget {
     );
   }
 
-  Widget _placeholderImage({required bool useCustomImage}) {
-    if (!useCustomImage) return _defaultPlaceholderIcon();
+  Widget _placeholderImage() {
     return Image.asset(
       _uncollectedStampImagePath,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _defaultPlaceholderIcon(),
-    );
-  }
-
-  /// 未収集用画像がない場合のフォールバック（魚アイコン）
-  Widget _defaultPlaceholderIcon() {
-    return Container(
-      color: const Color(0xFFEAF2FF),
-      child: Center(
-        child: Icon(
-          Icons.pets,
-          size: 36,
-          color: Colors.grey.shade400,
-        ),
-      ),
     );
   }
 }
