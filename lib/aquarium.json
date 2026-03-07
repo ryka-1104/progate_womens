@@ -134,7 +134,7 @@
         "name": "ジンベエザメトート",
         "category": "お土産",
         "price": 1800,
-        "image": "lib/assets/images/goods/zin_t.png",
+        "image": "lib/assets/images/goods/zin_b.png",
         "exhibit_attribute_ids": ["7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10"]
     },
 
