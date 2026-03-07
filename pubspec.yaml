@@ -67,8 +67,8 @@ flutter:
   assets:
     - lib/assets/modal_backlog.png
     - lib/aquarium.json
-    - assets/images/creature/
-    - assets/images/goods/
+    - lib/assets/images/creatures/
+    - lib/assets/images/goods/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
