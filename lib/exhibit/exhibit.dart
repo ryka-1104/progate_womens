@@ -9,6 +9,7 @@ abstract class Exhibit with _$Exhibit {
     required String id,
     required String name,
     required String image,
+    @JsonKey(name: 'stamp_image') required String stampImage,
     required String description,
     @JsonKey(name: 'linked_goods_ids') required List<String> linkedGoodsIds,
   }) = _Exhibit;
