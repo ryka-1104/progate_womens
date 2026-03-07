@@ -68,6 +68,7 @@ flutter:
     - lib/aquarium.json
     - lib/assets/
     - lib/assets/images/
+    - lib/assets/images/goods/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

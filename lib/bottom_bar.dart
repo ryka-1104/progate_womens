@@ -3,6 +3,7 @@ import 'package:progate_womens/camera.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:progate_womens/favorite/favorite_service.dart';
+import 'package:progate_womens/component/list_component.dart';
 
 Future<Map<String, dynamic>> loadJson() async {
   final data = await rootBundle.loadString('lib/aquarium.json');
@@ -18,14 +19,55 @@ class BottomBarApp extends StatefulWidget {
 
 class _BottomBarAppState extends State<BottomBarApp> {
   int _currentIndex = 0;
+
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
+
   List<Widget> get _pages => [
-    const QRScanOnlyPage(onDetected: _onCameraDetected),
+    QRScanOnlyPage(onDetected: _onCameraDetected),
     const _StampScreen(),
     SouvenirPage(key: souvenirPageKey),
   ];
 
-  static void _onCameraDetected(String value) {}
+  /// QRコードを読み取ったとき
+  static void _onCameraDetected(String value) async {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    final json = await loadJson();
+    final exhibits = json["exhibits"];
+
+    final exhibit = exhibits.firstWhere(
+      (e) => e["id"] == value,
+      orElse: () => null,
+    );
+
+    if (exhibit == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(exhibit["name"]),
+          content: Text(exhibit["description"]),
+          actions: [
+            TextButton(
+              child: const Text("閉じる"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: const Text("お気に入り登録"),
+              onPressed: () async {
+                await FavoriteService.addFavorite(exhibit["id"]);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +81,8 @@ class _BottomBarAppState extends State<BottomBarApp> {
             _currentIndex = index;
           });
 
-          if (index == 3) {
+          /// お土産タブを開いたとき更新
+          if (index == 2) {
             souvenirPageKey.currentState?.loadSouvenirs();
           }
         },
@@ -86,8 +129,7 @@ class _StampScreen extends StatelessWidget {
   }
 }
 
-// お土産画面　（お気に入り登録したリスト表記）
-// デザイン案に合わせて内容変更
+/// お土産画面
 class SouvenirPage extends StatefulWidget {
   const SouvenirPage({super.key});
 
@@ -106,16 +148,26 @@ class _SouvenirPageState extends State<SouvenirPage> {
 
   Future<void> loadSouvenirs() async {
     final json = await loadJson();
+
     final exhibits = json["exhibits"];
+    final goods = json["goods"];
 
-    final souvenirIds = await FavoriteService.getFavorites();
+    final favoriteIds = await FavoriteService.getFavorites();
 
-    final list = exhibits
-        .where((exhibit) => souvenirIds.contains(exhibit["id"]))
-        .toList();
+    final favoriteExhibits = exhibits.where(
+      (exhibit) => favoriteIds.contains(exhibit["id"]),
+    );
+
+    List goodsIds = [];
+
+    for (var exhibit in favoriteExhibits) {
+      goodsIds.addAll(exhibit["linked_goods_ids"]);
+    }
+
+    final resultGoods = goods.where((g) => goodsIds.contains(g["id"])).toList();
 
     setState(() {
-      souvenirItems = List<Map<String, dynamic>>.from(list);
+      souvenirItems = List<Map<String, dynamic>>.from(resultGoods);
     });
   }
 
@@ -123,7 +175,7 @@ class _SouvenirPageState extends State<SouvenirPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // 背景
+        /// 背景
         Positioned.fill(
           child: Image.asset(
             "lib/assets/images/background.png",
@@ -131,14 +183,25 @@ class _SouvenirPageState extends State<SouvenirPage> {
           ),
         ),
 
+        /// お土産リスト
         ListView.builder(
+          padding: EdgeInsets.only(top: 72, right: 16, bottom: 16, left: 16),
           itemCount: souvenirItems.length,
           itemBuilder: (context, index) {
-            final souvenir = souvenirItems[index];
+            final goods = souvenirItems[index];
 
-            return ListTile(
-              title: Text(souvenir["name"]),
-              subtitle: Text(souvenir["description"]),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GoodsListComponent(
+                photo: Image.asset(goods["image"], fit: BoxFit.cover),
+                goodsName: goods["name"],
+                categoryLabel: goods["category"] ?? "",
+                price: "¥${goods["price"]}",
+                isSaved: false,
+                onSavePressed: () {
+                  // 保存処理（必要なら実装）
+                },
+              ),
             );
           },
         ),
@@ -146,3 +209,6 @@ class _SouvenirPageState extends State<SouvenirPage> {
     );
   }
 }
+
+/// ダイアログ用のcontext取得
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
