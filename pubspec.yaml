@@ -65,10 +65,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - lib/assets/modal_backlog.png
     - lib/aquarium.json
-    - lib/assets/images/creatures/
-    - lib/assets/images/goods/
+    - lib/assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
