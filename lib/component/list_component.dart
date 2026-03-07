@@ -48,7 +48,7 @@ class GoodsListComponent extends StatelessWidget {
                 Text(
                   goodsName,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
                     height: 1.1,
                   ),
