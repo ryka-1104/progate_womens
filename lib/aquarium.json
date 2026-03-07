@@ -23,7 +23,7 @@
     {
       "id": "1e6b7c2a-9d4f-4e8b-8a3c-5f7d2e1a9b60",
       "name": "ジンベエザメ展示",
-      "image": "lib/assets/images/cratures/zinbe.jpg",
+      "image": "lib/assets/images/cratures/zinbe.jpeg",
       "description": "世界最大の魚であるジンベエザメの特徴や生態を紹介する展示です。",
       "linked_goods_ids": ["b3c7d9a1-6e2f-4c8a-9d5b-1f7a2e6c4d90" , "d5e7f8a9-1b2c-4d6e-8f9a-3c4b5d6e7f11"]
     },
@@ -44,7 +44,7 @@
     {
       "id": "6f4b2c1e-9d7a-4c8a-8e3f-1b5a2d6c9e77",
       "name": "ペンギン展示",
-      "image": "lib/assets/images/cratures/pengin.jpg",
+      "image": "lib/assets/images/cratures/pengin.jpeg",
       "description": "泳ぎが得意な海鳥ペンギンの暮らしや行動を紹介する展示です。",
       "linked_goods_ids": ["e1a7c9d4-5b2f-4c8e-9d3a-7f6b1c2e4a55" , "f2b3d4e5-6a7c-8d9e-0f1a-2b3c4d5e6f77"]
     },
@@ -61,12 +61,12 @@
       "name": "カメ展示",
       "image": "lib/assets/images/cratures/kame.jpg",
       "description": "ゆったり泳ぐウミガメの暮らしや特徴を紹介します。",
-      "linked_goods_ids": ["g3h4i5j6-7k8l-9m0n-1o2p-3q4r5s6t7u88"]
+      "linked_goods_ids": ["7c9a4d2e-5b1f-4e8c-9a73-2d6f0b1c8e45"]
     },
     {
       "id": "2f6c9e1a-4b7d-4c8e-9a5f-1d3b6c7a8e10",
       "name": "イルカ展示",
-      "image": "lib/assets/images/cratures/dol.jpg",
+      "image": "lib/assets/images/cratures/dol.jpeg",
       "description": "高い知能を持つイルカの行動やコミュニケーションを紹介します。",
       "linked_goods_ids": ["h4i5j6k7-8l9m-0n1o-2p3q-4r5s6t7u8v99"]
     },
@@ -98,7 +98,7 @@
       "name": "クラゲキーホルダー",
       "category": "お土産",
       "price": 600,
-      "image": "lib/assets/images/goods/kurage_k.jpg",
+      "image": "lib/assets/images/goods/kurage_k.png",
       "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41"]
     },
 
@@ -173,7 +173,7 @@
     },
 
     {
-        "id": "g3h4i5j6-7k8l-9m0n-1o2p-3q4r5s6t7u88",
+        "id": "7c9a4d2e-5b1f-4e8c-9a73-2d6f0b1c8e45",
         "name": "カメぬいぐるみ",
         "category": "お土産",
         "price": 3000,
