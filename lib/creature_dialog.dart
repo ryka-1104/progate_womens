@@ -128,12 +128,3 @@ class SampleCreatureDialog extends StatelessWidget {
     );
   }
 }
-
-// ファイルの一番下に追加してください
-void main() {
-  runApp(
-    const MaterialApp(
-      home: Scaffold(body: Center(child: SampleCreatureDialog())),
-    ),
-  );
-}
