@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:progate_womens/camera.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:progate_womens/favorite/favorite_service.dart';
+
+Future<Map<String, dynamic>> loadJson() async {
+  final data = await rootBundle.loadString('lib/aquarium.json');
+  return jsonDecode(data);
+}
 
 class BottomBarApp extends StatefulWidget {
   const BottomBarApp({super.key});
@@ -10,11 +18,11 @@ class BottomBarApp extends StatefulWidget {
 
 class _BottomBarAppState extends State<BottomBarApp> {
   int _currentIndex = 0;
-
-  final List<Widget> _pages = const [
-    QRScanOnlyPage(onDetected: _onCameraDetected),
-    _StampScreen(),
-    _SouvenirScreen(),
+  final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
+  List<Widget> get _pages => [
+    const QRScanOnlyPage(onDetected: _onCameraDetected),
+    const _StampScreen(),
+    SouvenirPage(key: souvenirPageKey),
   ];
 
   static void _onCameraDetected(String value) {}
@@ -30,6 +38,10 @@ class _BottomBarAppState extends State<BottomBarApp> {
           setState(() {
             _currentIndex = index;
           });
+
+          if (index == 3) {
+            souvenirPageKey.currentState?.loadSouvenirs();
+          }
         },
         selectedItemColor: const Color(0xFF2D5ACB),
         unselectedItemColor: const Color(0xFF8C939E),
@@ -64,11 +76,51 @@ class _StampScreen extends StatelessWidget {
   }
 }
 
-class _SouvenirScreen extends StatelessWidget {
-  const _SouvenirScreen();
+// お土産画面　（お気に入り登録したリスト表記）
+// デザイン案に合わせて内容変更
+class SouvenirPage extends StatefulWidget {
+  const SouvenirPage({super.key});
+
+  @override
+  State<SouvenirPage> createState() => _SouvenirPageState();
+}
+
+class _SouvenirPageState extends State<SouvenirPage> {
+  List<Map<String, dynamic>> souvenirItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadSouvenirs();
+  }
+
+  Future<void> loadSouvenirs() async {
+    final json = await loadJson();
+    final exhibits = json["exhibits"];
+
+    final souvenirIds = await FavoriteService.getFavorites();
+
+    final list = exhibits
+        .where((exhibit) => souvenirIds.contains(exhibit["id"]))
+        .toList();
+
+    setState(() {
+      souvenirItems = List<Map<String, dynamic>>.from(list);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('お土産画面（仮）')));
+    return ListView.builder(
+      itemCount: souvenirItems.length,
+      itemBuilder: (context, index) {
+        final souvenir = souvenirItems[index];
+
+        return ListTile(
+          title: Text(souvenir["name"]),
+          subtitle: Text(souvenir["description"]),
+        );
+      },
+    );
   }
 }
