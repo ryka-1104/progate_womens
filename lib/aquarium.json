@@ -186,7 +186,7 @@
         "name": "イルカぬいぐるみ",
         "category": "お土産",
         "price": 3000,
-        "image": "lib/assets/images/dol_m.png",
+        "image": "lib/assets/images/goods/dol_m.png",
         "exhibit_attribute_ids": ["3c9a1e7d-6b2f-4c8a-9d5e-7a1c2b6e3f55"]
     },
 
@@ -195,7 +195,7 @@
         "name": "エイぬいぐるみ",
         "category": "お土産",
         "price": 3000,
-        "image": "lib/assets/images/ei_m.png",
+        "image": "lib/assets/images/goods/ei_m.png",
         "exhibit_attribute_ids": ["6d2b9c1e-4a7f-4c8d-9e3a-1f5c2b7a6d66"]
     },
 
@@ -204,7 +204,7 @@
         "name": "エイブランケット",
         "category": "お土産",
         "price": 2800,
-        "image": "lib/assets/images/ei_bl.png",
+        "image": "lib/assets/images/goods/ei_bl.png",
         "exhibit_attribute_ids": ["6d2b9c1e-4a7f-4c8d-9e3a-1f5c2b7a6d66"]
     },
 
