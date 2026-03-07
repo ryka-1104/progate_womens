@@ -25,6 +25,9 @@ class GoodsListComponent extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF1F1F1),
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withOpacity(0.35),
+        ),
       ),
       child: Row(
         children: [
@@ -45,7 +48,7 @@ class GoodsListComponent extends StatelessWidget {
                 Text(
                   goodsName,
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 22,
                     fontWeight: FontWeight.w700,
                     height: 1.1,
                   ),

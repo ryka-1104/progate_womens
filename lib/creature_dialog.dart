@@ -33,15 +33,28 @@ class CreatureDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: onClose ?? () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                  color: const Color(0xFF6E6E6E),
+                  splashRadius: 20,
+                  tooltip: '閉じる',
+                ),
+              ),
               Center(child: stamp),
               const SizedBox(height: 16),
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF373737),
-                  height: 1.15,
+              Center(
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF373737),
+                    height: 1.15,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -58,51 +71,15 @@ class CreatureDialog extends StatelessWidget {
               Text(
                 goodsTitle,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF373737),
                 ),
               ),
               const SizedBox(height: 8),
               itemComponent,
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.center,
-                child: CreatureDialogCloseButton(
-                  onPressed: onClose ?? () => Navigator.of(context).pop(),
-                ),
-              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class CreatureDialogCloseButton extends StatelessWidget {
-  const CreatureDialogCloseButton({super.key, required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 140,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2D5ACB),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 0,
-        ),
-        child: const Text(
-          '閉じる',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
       ),
     );
@@ -150,4 +127,13 @@ class SampleCreatureDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+// ファイルの一番下に追加してください
+void main() {
+  runApp(
+    const MaterialApp(
+      home: Scaffold(body: Center(child: SampleCreatureDialog())),
+    ),
+  );
 }
