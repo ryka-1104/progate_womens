@@ -33,6 +33,7 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
 
   Future<void> loadExhibits() async {
     final json = await loadJson();
+    if (!mounted) return;
     setState(() {
       exhibits = json["exhibit_attributes"];
     });
