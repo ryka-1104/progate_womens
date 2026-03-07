@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:progate_womens/favorite/favorite_service.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
+Future<Map<String, dynamic>> loadJson() async {
+  final data = await rootBundle.loadString('lib/aquarium.json');
+  return jsonDecode(data);
+}
 
 class QRScanOnlyPage extends StatefulWidget {
   const QRScanOnlyPage({super.key, required this.onDetected});
@@ -14,11 +21,31 @@ class QRScanOnlyPage extends StatefulWidget {
 class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
   bool _detected = false;
   String? exhibitName;
+  String? exhibitId;
 
-  /// 仮の展示データ
-  final Map<String, String> exhibitMap = {
-    "3f9d8c0a-6c54-4b8e-9e21-5f4d1a7c2b13": "クラゲ展示",
-  };
+  List<dynamic> exhibits = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadExhibits();
+  }
+
+  Future<void> loadExhibits() async {
+    final json = await loadJson();
+    setState(() {
+      exhibits = json["exhibit_attributes"];
+    });
+  }
+
+  Map<String, dynamic>? findExhibit(String id) {
+    for (var exhibit in exhibits) {
+      if (exhibit["id"] == id) {
+        return exhibit;
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,32 +59,34 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
               final barcode = capture.barcodes.first;
               final value = barcode.rawValue;
 
-              if (value != null && exhibitMap.containsKey(value)) {
+              if (value == null) return;
+
+              final exhibit = findExhibit(value);
+
+              if (exhibit != null) {
                 setState(() {
                   _detected = true;
-                  exhibitName = exhibitMap[value];
+                  exhibitName = exhibit["name"];
+                  exhibitId = exhibit["id"];
                 });
+
                 widget.onDetected(value);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('このQRコードは登録されていません。もう一度お試しください。'),
-                  ),
+                  const SnackBar(content: Text("このQRコードは登録されていません")),
                 );
               }
             },
           ),
-          Center(
+
+          Positioned.fill(
             child: Image.asset(
-              'lib/assets/modal_backlog.png',
-              width: double.infinity,
-              height: double.infinity,
+              "lib/assets/modal_backlog.png",
               fit: BoxFit.cover,
             ),
           ),
 
           if (exhibitName != null)
-            // 以下デザイン案に合わせて変更
             Center(
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -66,17 +95,17 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "展示: $exhibitName",
+                      exhibitName!,
                       style: const TextStyle(color: Colors.white, fontSize: 28),
                     ),
+
                     const SizedBox(height: 20),
+
                     ElevatedButton.icon(
                       onPressed: () async {
-                        final id = exhibitMap.entries
-                            .firstWhere((e) => e.value == exhibitName)
-                            .key;
+                        if (exhibitId == null) return;
 
-                        await FavoriteService.addFavorite(id);
+                        await FavoriteService.addFavorite(exhibitId!);
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("お気に入りに追加しました")),
