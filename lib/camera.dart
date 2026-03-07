@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:progate_womens/favorite/favorite_service.dart';
 
 class QRScanOnlyPage extends StatefulWidget {
   const QRScanOnlyPage({super.key, required this.onDetected});
@@ -56,13 +57,35 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
           ),
 
           if (exhibitName != null)
+            // 以下デザイン案に合わせて変更
             Center(
               child: Container(
                 padding: const EdgeInsets.all(20),
                 color: Colors.black,
-                child: Text(
-                  "展示: $exhibitName",
-                  style: const TextStyle(color: Colors.white, fontSize: 28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "展示: $exhibitName",
+                      style: const TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final id = exhibitMap.entries
+                            .firstWhere((e) => e.value == exhibitName)
+                            .key;
+
+                        await FavoriteService.addFavorite(id);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("お気に入りに追加しました")),
+                        );
+                      },
+                      icon: const Icon(Icons.favorite),
+                      label: const Text("お気に入り登録"),
+                    ),
+                  ],
                 ),
               ),
             ),
