@@ -1,7 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/component/stamp_component.dart';
+import 'package:progate_womens/creature_dialog.dart';
+import 'package:progate_womens/exhibit/exhibit.dart';
+import 'package:progate_womens/exhibit/goods.dart';
+import 'package:progate_womens/exhibit/root_data.dart';
 import 'package:progate_womens/stamp/stamp_service.dart';
 
 Future<Map<String, dynamic>> _loadAquariumJson() async {
@@ -24,7 +29,8 @@ class StampListPage extends StatefulWidget {
 }
 
 class _StampListPageState extends State<StampListPage> {
-  List<Map<String, dynamic>> _exhibits = [];
+  List<Exhibit> _exhibits = [];
+  Map<String, Goods> _goodsById = {};
   Set<String> _collectedIds = {};
   bool _loading = true;
   String? _error;
@@ -42,11 +48,11 @@ class _StampListPageState extends State<StampListPage> {
     });
     try {
       final json = await _loadAquariumJson();
-      final exhibits =
-          (json['exhibits'] as List).cast<Map<String, dynamic>>();
+      final rootData = RootData.fromJson(json);
       final ids = await StampService.getCollectedIds();
       setState(() {
-        _exhibits = exhibits;
+        _exhibits = rootData.exhibits;
+        _goodsById = {for (final goods in rootData.goods) goods.id: goods};
         _collectedIds = ids.toSet();
         _loading = false;
       });
@@ -61,6 +67,84 @@ class _StampListPageState extends State<StampListPage> {
   /// 展示名から短いラベルを取得（例: 「クラゲ展示」→「クラゲ」）
   static String _shortName(String name) {
     return name.replaceAll('展示', '');
+  }
+
+  String _formatYen(int price) {
+    final text = price.toString();
+    final withComma = text.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => ',',
+    );
+    return '¥$withComma';
+  }
+
+  Widget _buildGoodsList(List<Goods> goodsList) {
+    if (goodsList.isEmpty) {
+      return const Text(
+        '関連するグッズはありません',
+        style: TextStyle(fontSize: 14, color: Color(0xFF6E6E6E)),
+      );
+    }
+
+    return Column(
+      children: [
+        for (var i = 0; i < goodsList.length; i++) ...[
+          GoodsListComponent(
+            photo: Image.asset(
+              goodsList[i].image,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const ColoredBox(
+                color: Color(0xFFC7DFF4),
+                child: Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: Color(0xFF4E6A83),
+                    size: 34,
+                  ),
+                ),
+              ),
+            ),
+            goodsName: goodsList[i].name,
+            categoryLabel: goodsList[i].category,
+            price: _formatYen(goodsList[i].price),
+            isSaved: false,
+          ),
+          if (i != goodsList.length - 1) const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+
+  void _showCreatureDialog(Exhibit exhibit, bool collected) {
+    final linkedGoods = exhibit.linkedGoodsIds
+        .map((id) => _goodsById[id])
+        .whereType<Goods>()
+        .toList();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return CreatureDialog(
+          stamp: StampComponent(
+            size: 240,
+            isActive: collected,
+            image: Image.asset(
+              exhibit.stampImage,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Image.asset(
+                _uncollectedStampImagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          name: _shortName(exhibit.name),
+          detail: exhibit.description,
+          goodsTitle: 'この生き物に関するグッズ',
+          itemComponent: _buildGoodsList(linkedGoods),
+          onClose: () => Navigator.of(dialogContext).pop(),
+        );
+      },
+    );
   }
 
   @override
@@ -120,18 +204,17 @@ class _StampListPageState extends State<StampListPage> {
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
                                 final exhibit = _exhibits[index];
-                                final id = exhibit['id'] as String;
-                                final name = exhibit['name'] as String;
+                                final id = exhibit.id;
+                                final name = exhibit.name;
                                 final collected = _collectedIds.contains(id);
-                                final stampImagePath =
-                                    exhibit['stamp_image'] as String?;
+                                final stampImagePath = exhibit.stampImage;
 
                                 return _StampGridItem(
                                   shortName: _shortName(name),
                                   collected: collected,
                                   stampImagePath: stampImagePath,
                                   onTap: () {
-                                    // タップで詳細ダイアログなどを開く場合はここで
+                                    _showCreatureDialog(exhibit, collected);
                                   },
                                 );
                               },
@@ -160,14 +243,14 @@ class _StampGridItem extends StatelessWidget {
 
   final String shortName;
   final bool collected;
-  final String? stampImagePath;
+  final String stampImagePath;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final image = collected && stampImagePath != null && stampImagePath!.isNotEmpty
+    final image = collected && stampImagePath.isNotEmpty
         ? Image.asset(
-            stampImagePath!,
+            stampImagePath,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => _placeholderImage(),
           )
