@@ -13,7 +13,7 @@ void main() {
   testWidgets('Bottom navigation switches between 3 screens', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MainApp());
+    await tester.pumpWidget(const MyApp());
 
     expect(find.byType(QRScanOnlyPage), findsOneWidget);
 

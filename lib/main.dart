@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:progate_womens/bottom_bar.dart';
+import 'package:progate_womens/logic/aquarium_logic.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AquariumService.loadJson();
+
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      home: BottomBarApp(),
+      home: const BottomBarApp(),
     );
   }
 }
