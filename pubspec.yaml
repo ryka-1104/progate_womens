@@ -71,6 +71,7 @@ flutter:
     - lib/assets/images/stamps/
     - lib/assets/images/creatures/
     - lib/assets/images/goods/
+    - lib/assets/images/stamps/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
