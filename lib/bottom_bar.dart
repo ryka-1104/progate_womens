@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:progate_womens/camera.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:progate_womens/logic/aquarium_logic.dart';
 import 'package:progate_womens/favorite/favorite_service.dart';
 import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/stamp_list.dart';
-
-Future<Map<String, dynamic>> loadJson() async {
-  final data = await rootBundle.loadString('lib/aquarium.json');
-  return jsonDecode(data);
-}
 
 class BottomBarApp extends StatefulWidget {
   const BottomBarApp({super.key});
@@ -24,23 +18,17 @@ class _BottomBarAppState extends State<BottomBarApp> {
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
 
   List<Widget> get _pages => [
-    const QRScanOnlyPage(onDetected: _onCameraDetected),
+    QRScanOnlyPage(onDetected: _onCameraDetected),
     const StampListPage(),
     SouvenirPage(key: souvenirPageKey),
   ];
 
-  /// QRコードを読み取ったとき
+  /// QR読み取り
   static void _onCameraDetected(String value) async {
     final context = navigatorKey.currentContext;
     if (context == null) return;
 
-    final json = await loadJson();
-    final exhibits = json["exhibits"];
-
-    final exhibit = exhibits.firstWhere(
-      (e) => e["id"] == value,
-      orElse: () => null,
-    );
+    final exhibit = AquariumService.getExhibitById(value);
 
     if (exhibit == null) return;
 
@@ -75,14 +63,13 @@ class _BottomBarAppState extends State<BottomBarApp> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
 
-          /// お土産タブを開いたとき更新
           if (index == 2) {
             souvenirPageKey.currentState?.loadSouvenirs();
           }
@@ -148,10 +135,8 @@ class _SouvenirPageState extends State<SouvenirPage> {
   }
 
   Future<void> loadSouvenirs() async {
-    final json = await loadJson();
-
-    final exhibits = json["exhibits"];
-    final goods = json["goods"];
+    final exhibits = AquariumService.getExhibits();
+    final goods = AquariumService.getGoods();
 
     final favoriteIds = await FavoriteService.getFavorites();
 
@@ -176,17 +161,14 @@ class _SouvenirPageState extends State<SouvenirPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        /// 背景
         Positioned.fill(
           child: Image.asset(
             "lib/assets/images/background.png",
             fit: BoxFit.cover,
           ),
         ),
-
-        /// お土産リスト
         ListView.builder(
-          padding: EdgeInsets.only(top: 72, right: 16, bottom: 16, left: 16),
+          padding: const EdgeInsets.only(top: 72, left: 16, right: 16),
           itemCount: souvenirItems.length,
           itemBuilder: (context, index) {
             final goods = souvenirItems[index];
@@ -199,9 +181,7 @@ class _SouvenirPageState extends State<SouvenirPage> {
                 categoryLabel: goods["category"] ?? "",
                 price: "¥${goods["price"]}",
                 isSaved: false,
-                onSavePressed: () {
-                  // 保存処理（必要なら実装）
-                },
+                onSavePressed: () {},
               ),
             );
           },
