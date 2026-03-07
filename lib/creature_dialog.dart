@@ -26,59 +26,64 @@ class CreatureDialog extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F0F0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 360),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: onClose ?? () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                  color: const Color(0xFF6E6E6E),
-                  splashRadius: 20,
-                  tooltip: '閉じる',
-                ),
-              ),
-              Center(child: stamp),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF373737),
-                    height: 1.15,
+        constraints: BoxConstraints(
+          maxWidth: 360,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: onClose ?? () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                    color: const Color(0xFF6E6E6E),
+                    splashRadius: 20,
+                    tooltip: '閉じる',
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                detail,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF373737),
-                  height: 1.4,
+                Center(child: stamp),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF373737),
+                      height: 1.15,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                goodsTitle,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF373737),
+                const SizedBox(height: 8),
+                Text(
+                  detail,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF373737),
+                    height: 1.4,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              itemComponent,
-            ],
+                const SizedBox(height: 20),
+                Text(
+                  goodsTitle,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF373737),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                itemComponent,
+              ],
+            ),
           ),
         ),
       ),
