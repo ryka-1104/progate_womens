@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'bottom_bar.dart';
-import 'logic/aquarium_logic.dart';
+import 'package:progate_womens/bottom_bar.dart';
+import 'package:progate_womens/logic/aquarium_logic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
