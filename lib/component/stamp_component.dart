@@ -34,10 +34,7 @@ class StampComponent extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: ClipOval(child: image),
-      ),
+      child: ClipOval(child: image),
     );
 
     if (onTap == null) {
