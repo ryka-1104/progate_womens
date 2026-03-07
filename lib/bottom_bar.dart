@@ -3,6 +3,7 @@ import 'package:progate_womens/camera.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:progate_womens/favorite/favorite_service.dart';
+import 'package:progate_womens/stamp_list.dart';
 
 Future<Map<String, dynamic>> loadJson() async {
   final data = await rootBundle.loadString('lib/aquarium.json');
@@ -21,7 +22,7 @@ class _BottomBarAppState extends State<BottomBarApp> {
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
   List<Widget> get _pages => [
     const QRScanOnlyPage(onDetected: _onCameraDetected),
-    const _StampScreen(),
+    const StampListPage(),
     SouvenirPage(key: souvenirPageKey),
   ];
 
@@ -64,15 +65,6 @@ class _BottomBarAppState extends State<BottomBarApp> {
         ],
       ),
     );
-  }
-}
-
-class _StampScreen extends StatelessWidget {
-  const _StampScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('スタンプ画面（仮）')));
   }
 }
 
