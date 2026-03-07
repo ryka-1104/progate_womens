@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:progate_womens/favorite/favorite_service.dart';
 import 'package:progate_womens/component/list_component.dart';
+import 'package:progate_womens/stamp_list.dart';
 
 Future<Map<String, dynamic>> loadJson() async {
   final data = await rootBundle.loadString('lib/aquarium.json');
@@ -23,8 +24,8 @@ class _BottomBarAppState extends State<BottomBarApp> {
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
 
   List<Widget> get _pages => [
-    QRScanOnlyPage(onDetected: _onCameraDetected),
-    const _StampScreen(),
+    const QRScanOnlyPage(onDetected: _onCameraDetected),
+    const StampListPage(),
     SouvenirPage(key: souvenirPageKey),
   ];
 
