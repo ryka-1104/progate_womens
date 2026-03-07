@@ -72,7 +72,17 @@ class _StampScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('スタンプ画面（仮）')));
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("lib/assets/images/background.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(child: Text('スタンプ画面（仮）')),
+      ),
+    );
   }
 }
 
@@ -111,16 +121,28 @@ class _SouvenirPageState extends State<SouvenirPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: souvenirItems.length,
-      itemBuilder: (context, index) {
-        final souvenir = souvenirItems[index];
+    return Stack(
+      children: [
+        // 背景
+        Positioned.fill(
+          child: Image.asset(
+            "lib/assets/images/background.png",
+            fit: BoxFit.cover,
+          ),
+        ),
 
-        return ListTile(
-          title: Text(souvenir["name"]),
-          subtitle: Text(souvenir["description"]),
-        );
-      },
+        ListView.builder(
+          itemCount: souvenirItems.length,
+          itemBuilder: (context, index) {
+            final souvenir = souvenirItems[index];
+
+            return ListTile(
+              title: Text(souvenir["name"]),
+              subtitle: Text(souvenir["description"]),
+            );
+          },
+        ),
+      ],
     );
   }
 }
