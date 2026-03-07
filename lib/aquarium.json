@@ -5,7 +5,7 @@
     { "id": "2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44", "name": "チンアナゴ" },
     { "id": "9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33", "name": "ヒトデ" },
     { "id": "4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55", "name": "ペンギン" },
-
+    { "id": "9f3b2c4d-7a1e-4c8f-9d6a-2b5e7c1a3f44", "name": "アザラシ"},
     { "id": "5f1a9e3c-6d4b-4c7e-9a2f-1b3d6e8c7a21", "name": "クマノミ" },
     { "id": "8a6e2c1d-5b3f-4c9a-8d7e-2f1a6c3b9e44", "name": "カメ" },
     { "id": "3c9a1e7d-6b2f-4c8a-9d5e-7a1c2b6e3f55", "name": "イルカ" },
@@ -83,6 +83,13 @@
       "image": "assets/images/exhibits/exhibit_10.png",
       "description": "オスが子育てをすることで知られるタツノオトシゴの生態を紹介します。",
       "linked_goods_ids": ["j6k7l8m9-0n1o-2p3q-4r5s-6t7u8v9w1x11"]
+    },
+    {
+        "id": "8b2c1d7e-5f6a-4c8e-9d3a-1b7c2e6f9a33",
+        "name": "アザラシ展示",
+        "image": "assets/images/exhibits/exhibit_11.png",
+        "description": "愛らしい姿で人気のアザラシの生態や特徴を紹介します。",
+        "linked_goods_ids": ["m9n0o1p2-3q4r-5s6t-7u8v-9w1x2y3z44"]
     }
   ],
   "goods": [
@@ -91,7 +98,7 @@
       "name": "クラゲキーホルダー",
       "category": "お土産",
       "price": 600,
-      "image": "lib/assets/images/kurage_k.jpg",
+      "image": "lib/assets/images/goods/kurage_k.jpg",
       "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41"]
     },
 
@@ -100,7 +107,7 @@
         "name": "クラゲトート",
         "category": "お土産",
         "price": 1200,
-        "image": "lib/assets/images/kurage_b.png",
+        "image": "lib/assets/images/goods/kurage_b.png",
         "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41"]
     },
 
@@ -109,7 +116,7 @@
         "name": "クマノミぬいぐるみ",
         "category": "お土産",
         "price": 3000,
-        "image": "lib/assets/images/nimo_m.png",
+        "image": "lib/assets/images/goods/nimo_m.png",
         "exhibit_attribute_ids": ["5f1a9e3c-6d4b-4c7e-9a2f-1b3d6e8c7a21"]
     },
 
@@ -118,7 +125,7 @@
       "name": "ジンベエザメプレート",
       "category": "お土産",
       "price": 1500,
-      "image": "lib/assets/images/zin_p.png",
+      "image": "lib/assets/images/goods/zin_p.png",
       "exhibit_attribute_ids": ["7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10"]
     },
 
@@ -127,7 +134,7 @@
         "name": "ジンベエザメトート",
         "category": "お土産",
         "price": 1800,
-        "image": "lib/assets/images/zin_t.png",
+        "image": "lib/assets/images/goods/zin_t.png",
         "exhibit_attribute_ids": ["7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10"]
     },
 
@@ -136,7 +143,7 @@
       "name": "チンアナゴぬいぐるみ",
       "category": "お土産",
       "price": 3000,
-      "image": "lib/assets/images/tin_m.png",
+      "image": "lib/assets/images/goods/tin_m.png",
       "exhibit_attribute_ids": ["2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44"]
     },
     {
@@ -144,7 +151,7 @@
       "name": "ヒトデぬいぐるみ",
       "category": "お土産",
       "price": 2500,
-      "image": "lib/assets/images/htd_m.png",
+      "image": "lib/assets/images/goods/htd_m.png",
       "exhibit_attribute_ids": ["9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33"]
     },
     {
@@ -152,7 +159,7 @@
       "name": "ペンギンぬいぐるみ",
       "category": "お土産",
       "price": 3000,
-      "image": "lib/assets/images/pen_m.png",
+      "image": "lib/assets/images/goods/pen_m.png",
       "exhibit_attribute_ids": ["4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55"]
     },
 
@@ -161,7 +168,7 @@
         "name": "ペンギングローブ",
         "category": "お土産",
         "price": 1800,
-        "image": "lib/assets/images/pen_g.png",
+        "image": "lib/assets/images/goods/pen_g.png",
         "exhibit_attribute_ids": ["4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55"]
     },
 
@@ -170,7 +177,7 @@
         "name": "カメぬいぐるみ",
         "category": "お土産",
         "price": 3000,
-        "image": "lib/assets/images/ta_m.png",
+        "image": "lib/assets/images/goods/ta_m.png",
         "exhibit_attribute_ids": ["8a6e2c1d-5b3f-4c9a-8d7e-2f1a6c3b9e44"]
     },
 
@@ -206,7 +213,7 @@
         "name": "タツノオトシゴぬいぐるみ",
         "category": "お土産",
         "price": 3000,
-        "image": "lib/assets/images/tsu_m.png",
+        "image": "lib/assets/images/goods/tsu_m.png",
         "exhibit_attribute_ids": ["1e7c3a9d-5b2f-4c8e-9d6a-3f1b7c2e4a77"]
     },
 
@@ -215,7 +222,7 @@
         "name": "海の生き物チョコ",
         "category": "お土産",
         "price": 1200,
-        "image": "lib/assets/images/choco.png",
+        "image": "lib/assets/images/goods/choco.png",
         "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41", "7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10",  "2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44", "9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33", "4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55", "5f1a9e3c-6d4b-4c7e-9a2f-1b3d6e8c7a21", "8a6e2c1d-5b3f-4c9a-8d7e-2f1a6c3b9e44", "3c9a1e7d-6b2f-4c8a-9d5e-7a1c2b6e3f55", "6d2b9c1e-4a7f-4c8d-9e3a-1f5c2b7a6d66", "1e7c3a9d-5b2f-4c8e-9d6a-3f1b7c2e4a77"]
 
     },
@@ -225,8 +232,16 @@
         "name": "海の生き物クッキー",
         "category": "お土産",
         "price": 1000,
-        "image": "lib/assets/images/cookie.png",
+        "image": "lib/assets/images/goods/cookie.png",
         "exhibit_attribute_ids": ["c1a4e8d9-72b3-4f6a-9c0d-3e5f7a8b2c41", "7d9f1c2b-4e6a-4f1c-8b2a-5e9d3a7c6b10",  "2b7c9e4d-6a51-4c2f-9d3a-8f1e7b5c2d44", "9e2a1d7b-3f6c-4a8d-b5c1-7d4e2a9c6f33", "4a6c9e2f-8d1b-4c7a-9e5f-2b3d6a7c1e55", "5f1a9e3c-6d4b-4c7e-9a2f-1b3d6e8c7a21", "8a6e2c1d-5b3f-4c9a-8d7e-2f1a6c3b9e44", "3c9a1e7d-6b2f-4c8a-9d5e-7a1c2b6e3f55", "6d2b9c1e-4a7f-4c8d-9e3a-1f5c2b7a6d66", "1e7c3a9d-5b2f-4c8e-9d6a-3f1b7c2e4a77"]
+    },
+    {
+        "id": "m9n0o1p2-3q4r-5s6t-7u8v-9w1x2y3z44",
+        "name": "アザラシぬいぐるみ",
+        "category": "お土産",
+        "price": 3000,
+        "image": "lib/assets/images/goods/aza_m.png",
+        "exhibit_attribute_ids": ["9f3b2c4d-7a1e-4c8f-9d6a-2b5e7c1a3f44"]
     }
   ]
 }
