@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progate_womens/component/stamp_component.dart';
+import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/creature_dialog.dart';
 import 'package:progate_womens/exhibit/exhibit.dart';
 import 'package:progate_womens/exhibit/goods.dart';
@@ -7,13 +8,8 @@ import 'package:progate_womens/exhibit/root_data.dart';
 import 'package:progate_womens/stamp/stamp_service.dart';
 import 'package:progate_womens/logic/aquarium_logic.dart';
 
-/// 未収集スタンプ用の魚画像パス。
-/// `lib/assets/images/stamps/fish.png` を表示します。
-/// 画像が存在しない場合はアイコンで表示されます。
 const _uncollectedStampImagePath = 'lib/assets/images/stamps/fish.png';
 
-/// 「集めた生き物たち」スタンプ一覧画面。
-/// aquarium.json の exhibits と StampService の収集状態を連携して表示します。
 class StampListPage extends StatefulWidget {
   const StampListPage({super.key});
 
@@ -41,9 +37,20 @@ class _StampListPageState extends State<StampListPage> {
     });
 
     try {
-      final json = await _loadAquariumJson();
-      final rootData = RootData.fromJson(json);
+      await AquariumService.loadJson();
+
+      final exhibitsJson = AquariumService.getExhibits();
+      final goodsJson = AquariumService.getGoods();
+
+      final rootData = RootData.fromJson({
+        "exhibit_attributes": [],
+        "exhibits": exhibitsJson,
+        "goods": goodsJson,
+      });
+
       final ids = await StampService.getCollectedIds();
+
+      if (!mounted) return;
 
       setState(() {
         _exhibits = rootData.exhibits;
@@ -52,6 +59,8 @@ class _StampListPageState extends State<StampListPage> {
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         _error = e.toString();
         _loading = false;
@@ -59,7 +68,6 @@ class _StampListPageState extends State<StampListPage> {
     }
   }
 
-  /// 展示名から短いラベルを取得（例: 「クラゲ展示」→「クラゲ」）
   static String _shortName(String name) {
     return name.replaceAll('展示', '');
   }
@@ -116,7 +124,7 @@ class _StampListPageState extends State<StampListPage> {
         .whereType<Goods>()
         .toList();
 
-    showDialog<void>(
+    showDialog(
       context: context,
       builder: (dialogContext) {
         return CreatureDialog(
@@ -126,10 +134,8 @@ class _StampListPageState extends State<StampListPage> {
             image: Image.asset(
               exhibit.stampImage,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Image.asset(
-                _uncollectedStampImagePath,
-                fit: BoxFit.cover,
-              ),
+              errorBuilder: (_, __, ___) =>
+                  Image.asset(_uncollectedStampImagePath),
             ),
           ),
           name: _shortName(exhibit.name),
@@ -182,6 +188,7 @@ class _StampListPageState extends State<StampListPage> {
                         ),
                       ),
                     ),
+
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       sliver: SliverGrid(
@@ -192,32 +199,24 @@ class _StampListPageState extends State<StampListPage> {
                               crossAxisSpacing: 16,
                               childAspectRatio: 0.85,
                             ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final exhibit = _exhibits[index];
-                                final id = exhibit.id;
-                                final name = exhibit.name;
-                                final collected = _collectedIds.contains(id);
-                                final stampImagePath = exhibit.stampImage;
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final exhibit = _exhibits[index];
+                          final id = exhibit.id;
+                          final name = exhibit.name;
+                          final collected = _collectedIds.contains(id);
 
-                                return _StampGridItem(
-                                  shortName: _shortName(name),
-                                  collected: collected,
-                                  stampImagePath: stampImagePath,
-                                  onTap: () {
-                                    _showCreatureDialog(exhibit, collected);
-                                  },
-                                );
-                              },
-                              childCount: _exhibits.length,
-                            ),
-                          ),
-                        ),
-                        const SliverToBoxAdapter(
-                          child: SizedBox(height: 24),
-                        ),
-                      ],
+                          return _StampGridItem(
+                            shortName: _shortName(name),
+                            collected: collected,
+                            stampImagePath: exhibit.stampImage,
+                            onTap: () {
+                              _showCreatureDialog(exhibit, collected);
+                            },
+                          );
+                        }, childCount: _exhibits.length),
+                      ),
                     ),
+
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
                   ],
                 ),

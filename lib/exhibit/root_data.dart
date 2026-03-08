@@ -1,20 +1,20 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'exhibit.dart';
-import 'exhibit_attribute.dart';
 import 'goods.dart';
 
-part 'root_data.freezed.dart';
-part 'root_data.g.dart';
+class RootData {
+  final List<Exhibit> exhibits;
+  final List<Goods> goods;
 
-@freezed
-abstract class RootData with _$RootData {
-  const factory RootData({
-    @JsonKey(name: 'exhibit_attributes')
-    required List<ExhibitAttribute> exhibitAttributes,
-    required List<Exhibit> exhibits,
-    required List<Goods> goods,
-  }) = _RootData;
+  RootData({required this.exhibits, required this.goods});
 
-  factory RootData.fromJson(Map<String, dynamic> json) =>
-      _$RootDataFromJson(json);
+  factory RootData.fromJson(Map<String, dynamic> json) {
+    return RootData(
+      exhibits: (json['exhibits'] as List<dynamic>? ?? [])
+          .map((e) => Exhibit.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      goods: (json['goods'] as List<dynamic>? ?? [])
+          .map((g) => Goods.fromJson(g as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 }
