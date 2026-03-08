@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:progate_womens/favorite/favorite_service.dart';
+import 'package:progate_womens/creature_dialog.dart';
+import 'package:progate_womens/component/list_component.dart';
+import 'package:progate_womens/component/stamp_component.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
@@ -20,32 +22,121 @@ class QRScanOnlyPage extends StatefulWidget {
 
 class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
   bool _detected = false;
-  String? exhibitName;
-  String? exhibitId;
 
   List<dynamic> exhibits = [];
+  List<dynamic> goods = [];
+  List<dynamic> attributes = [];
 
   @override
   void initState() {
     super.initState();
-    loadExhibits();
+    loadData();
   }
 
-  Future<void> loadExhibits() async {
+  /// JSON読み込み
+  Future<void> loadData() async {
     final json = await loadJson();
+
     if (!mounted) return;
+
     setState(() {
-      exhibits = json["exhibit_attributes"];
+      exhibits = json["exhibits"];
+      goods = json["goods"];
+      attributes = json["exhibit_attributes"];
     });
   }
 
-  Map<String, dynamic>? findExhibit(String id) {
+  /// exhibit検索
+  Map<String, dynamic>? findExhibitByAttribute(String attrId) {
     for (var exhibit in exhibits) {
-      if (exhibit["id"] == id) {
-        return exhibit;
+      for (var gId in exhibit["linked_goods_ids"]) {
+        for (var g in goods) {
+          if (g["id"] == gId) {
+            if ((g["exhibit_attribute_ids"] as List).contains(attrId)) {
+              return exhibit;
+            }
+          }
+        }
       }
     }
     return null;
+  }
+
+  /// goods取得
+  List<Map<String, dynamic>> findGoods(List ids) {
+    List<Map<String, dynamic>> result = [];
+
+    for (var g in goods) {
+      if (ids.contains(g["id"])) {
+        result.add(g);
+      }
+    }
+
+    return result;
+  }
+
+  /// グッズUI
+  Widget buildGoodsList(List<Map<String, dynamic>> goodsList) {
+    if (goodsList.isEmpty) {
+      return const Text("関連グッズなし");
+    }
+
+    return Column(
+      children: goodsList.map((g) {
+        return GoodsListComponent(
+          photo: Image.asset(
+            g["image"],
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          ),
+          goodsName: g["name"],
+          categoryLabel: g["category"],
+          price: "¥${g["price"]}",
+          isSaved: false,
+        );
+      }).toList(),
+    );
+  }
+
+  /// ダイアログ表示
+  void showCreatureDialog(Map<String, dynamic> exhibit) {
+    List goodsIds = exhibit["linked_goods_ids"] ?? [];
+
+    final goodsList = findGoods(goodsIds);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreatureDialog(
+          stamp: StampComponent(
+            size: 220,
+            isActive: true,
+            image: Image.asset(exhibit["stamp_image"], fit: BoxFit.contain),
+          ),
+
+          name: exhibit["name"],
+
+          detail: exhibit["description"],
+
+          goodsTitle: "この生き物のグッズ",
+
+          itemComponent: buildGoodsList(goodsList),
+          onClose: () {
+            Navigator.pop(context);
+
+            setState(() {
+              _detected = false;
+            });
+          },
+        );
+      },
+    ).then((_) {
+      /// ダイアログ外タップで閉じた場合も再開
+      setState(() {
+        _detected = false;
+      });
+    });
   }
 
   @override
@@ -53,6 +144,7 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
     return Scaffold(
       body: Stack(
         children: [
+          /// カメラ
           MobileScanner(
             onDetect: (capture) {
               if (_detected) return;
@@ -62,16 +154,14 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
 
               if (value == null) return;
 
-              final exhibit = findExhibit(value);
+              final exhibit = findExhibitByAttribute(value);
 
               if (exhibit != null) {
-                setState(() {
-                  _detected = true;
-                  exhibitName = exhibit["name"];
-                  exhibitId = exhibit["id"];
-                });
+                _detected = true;
 
                 widget.onDetected(value);
+
+                showCreatureDialog(exhibit);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("このQRコードは登録されていません")),
@@ -80,45 +170,15 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
             },
           ),
 
+          /// スキャンUI
           Positioned.fill(
-            child: Image.asset(
-              "lib/assets/modal_backlog.png",
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          if (exhibitName != null)
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.black,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      exhibitName!,
-                      style: const TextStyle(color: Colors.white, fontSize: 28),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        if (exhibitId == null) return;
-
-                        await FavoriteService.addFavorite(exhibitId!);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("お気に入りに追加しました")),
-                        );
-                      },
-                      icon: const Icon(Icons.favorite),
-                      label: const Text("お気に入り登録"),
-                    ),
-                  ],
-                ),
+            child: IgnorePointer(
+              child: Image.asset(
+                "lib/assets/modal_backlog.png",
+                fit: BoxFit.cover,
               ),
             ),
+          ),
         ],
       ),
     );
