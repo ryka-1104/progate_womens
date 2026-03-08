@@ -15,11 +15,12 @@ class BottomBarApp extends StatefulWidget {
 class _BottomBarAppState extends State<BottomBarApp> {
   int _currentIndex = 0;
 
+  final GlobalKey stampListPageKey = GlobalKey();
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
 
   List<Widget> get _pages => [
     QRScanOnlyPage(onDetected: _onCameraDetected),
-    const StampListPage(),
+    StampListPage(key: stampListPageKey),
     SouvenirPage(key: souvenirPageKey),
   ];
 
@@ -69,6 +70,10 @@ class _BottomBarAppState extends State<BottomBarApp> {
           setState(() {
             _currentIndex = index;
           });
+
+          if (index == 1) {
+            (stampListPageKey.currentState as dynamic)?.refresh();
+          }
 
           if (index == 2) {
             souvenirPageKey.currentState?.loadSouvenirs();

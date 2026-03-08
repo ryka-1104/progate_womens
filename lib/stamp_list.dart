@@ -30,6 +30,9 @@ class _StampListPageState extends State<StampListPage> {
     _load();
   }
 
+  /// 外部から呼び出し可能な再読み込みメソッド
+  void refresh() => _load();
+
   Future<void> _load() async {
     setState(() {
       _loading = true;
