@@ -48,7 +48,7 @@ class _BottomBarAppState extends State<BottomBarApp> {
             ElevatedButton(
               child: const Text("お気に入り登録"),
               onPressed: () async {
-                await FavoriteService.addFavorite(exhibit["id"]);
+                await FavoriteService.addFavorite(value);
                 Navigator.pop(context);
               },
             ),
@@ -74,7 +74,7 @@ class _BottomBarAppState extends State<BottomBarApp> {
             souvenirPageKey.currentState?.loadSouvenirs();
           }
         },
-        selectedItemColor: const Color(0xFF2D5ACB),
+        selectedItemColor: const Color(0xFF3C373C),
         unselectedItemColor: const Color(0xFF8C939E),
         items: const [
           BottomNavigationBarItem(
@@ -127,6 +127,7 @@ class SouvenirPage extends StatefulWidget {
 
 class _SouvenirPageState extends State<SouvenirPage> {
   List<Map<String, dynamic>> souvenirItems = [];
+  Set<String> favoriteIds = {};
 
   @override
   void initState() {
@@ -138,7 +139,9 @@ class _SouvenirPageState extends State<SouvenirPage> {
     final exhibits = AquariumService.getExhibits();
     final goods = AquariumService.getGoods();
 
-    final favoriteIds = await FavoriteService.getFavorites();
+    final favorites = await FavoriteService.getFavorites();
+
+    favoriteIds = favorites.toSet();
 
     final favoriteExhibits = exhibits.where(
       (exhibit) => favoriteIds.contains(exhibit["id"]),
@@ -180,8 +183,20 @@ class _SouvenirPageState extends State<SouvenirPage> {
                 goodsName: goods["name"],
                 categoryLabel: goods["category"] ?? "",
                 price: "¥${goods["price"]}",
-                isSaved: false,
-                onSavePressed: () {},
+                isSaved: favoriteIds.contains(goods["id"]),
+                onSavePressed: () async {
+                  final id = goods["id"];
+
+                  if (favoriteIds.contains(id)) {
+                    await FavoriteService.removeFavorite(id);
+                    favoriteIds.remove(id);
+                  } else {
+                    await FavoriteService.addFavorite(id);
+                    favoriteIds.add(id);
+                  }
+
+                  setState(() {});
+                },
               ),
             );
           },

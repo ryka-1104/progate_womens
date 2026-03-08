@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progate_womens/favorite/favorite_service.dart';
 
 class GoodsListComponent extends StatelessWidget {
   const GoodsListComponent({
@@ -78,7 +79,9 @@ class GoodsListComponent extends StatelessWidget {
             onPressed: onSavePressed,
             icon: Icon(
               isSaved ? Icons.bookmark : Icons.bookmark_border,
-              color: const Color(0xFF8B8B8B),
+              color: isSaved
+                  ? const Color(0xFF3C373C)
+                  : const Color(0xFF8B8B8B),
               size: 28,
             ),
             splashRadius: 20,
@@ -90,8 +93,49 @@ class GoodsListComponent extends StatelessWidget {
   }
 }
 
-class SampleGoodsListComponent extends StatelessWidget {
-  const SampleGoodsListComponent({super.key});
+class SampleGoodsListComponent extends StatefulWidget {
+  final String goodsId; // グッズIDを指定
+  const SampleGoodsListComponent({
+    super.key,
+    required this.goodsId,
+    required Image photo,
+    required goodsName,
+    required categoryLabel,
+    required String price,
+  });
+
+  @override
+  State<SampleGoodsListComponent> createState() =>
+      _SampleGoodsListComponentState();
+}
+
+class _SampleGoodsListComponentState extends State<SampleGoodsListComponent> {
+  bool isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteStatus();
+  }
+
+  Future<void> _loadFavoriteStatus() async {
+    final favs = await FavoriteService.getFavorites();
+    setState(() {
+      isSaved = favs.contains(widget.goodsId);
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (isSaved) {
+      await FavoriteService.removeFavorite(widget.goodsId);
+    } else {
+      await FavoriteService.addFavorite(widget.goodsId);
+    }
+
+    setState(() {
+      isSaved = !isSaved;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +149,8 @@ class SampleGoodsListComponent extends StatelessWidget {
       goodsName: 'グッズ名',
       categoryLabel: '商品カテゴリーラベル',
       price: '¥2,800',
-      isSaved: false,
-      onSavePressed: () {},
+      isSaved: isSaved,
+      onSavePressed: _toggleFavorite, // お気に入り登録/解除
     );
   }
 }
