@@ -14,9 +14,14 @@ Future<Map<String, dynamic>> loadJson() async {
 }
 
 class QRScanOnlyPage extends StatefulWidget {
-  const QRScanOnlyPage({super.key, required this.onDetected});
+  const QRScanOnlyPage({
+    super.key,
+    required this.onDetected,
+    required this.isActive,
+  });
 
   final void Function(String value) onDetected;
+  final bool isActive;
 
   @override
   State<QRScanOnlyPage> createState() => _QRScanOnlyPageState();
@@ -24,6 +29,7 @@ class QRScanOnlyPage extends StatefulWidget {
 
 class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
   bool _detected = false;
+  final MobileScannerController _scannerController = MobileScannerController();
 
   List<dynamic> exhibits = [];
   List<dynamic> goods = [];
@@ -36,6 +42,29 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
     super.initState();
     loadData();
     loadFavorites();
+
+    if (!widget.isActive) {
+      _scannerController.stop();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant QRScanOnlyPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isActive == widget.isActive) return;
+
+    if (widget.isActive) {
+      _scannerController.start();
+    } else {
+      _scannerController.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scannerController.dispose();
+    super.dispose();
   }
 
   Future<void> loadFavorites() async {
@@ -182,6 +211,7 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
         children: [
           /// カメラ
           MobileScanner(
+            controller: _scannerController,
             onDetect: (capture) {
               if (_detected) return;
 

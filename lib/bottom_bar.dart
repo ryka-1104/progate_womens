@@ -19,7 +19,7 @@ class _BottomBarAppState extends State<BottomBarApp> {
   final GlobalKey<_SouvenirPageState> souvenirPageKey = GlobalKey();
 
   List<Widget> get _pages => [
-    QRScanOnlyPage(onDetected: _onCameraDetected),
+    QRScanOnlyPage(onDetected: _onCameraDetected, isActive: _currentIndex == 0),
     StampListPage(key: stampListPageKey),
     SouvenirPage(key: souvenirPageKey),
   ];

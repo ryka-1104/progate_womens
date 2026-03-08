@@ -80,7 +80,7 @@ class GoodsListComponent extends StatelessWidget {
             icon: Icon(
               isSaved ? Icons.bookmark : Icons.bookmark_border,
               color: isSaved
-                  ? const Color(0xFF3C373C)
+                  ? const Color(0xFF2D5ACB)
                   : const Color(0xFF8B8B8B),
               size: 28,
             ),

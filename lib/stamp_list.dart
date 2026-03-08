@@ -7,6 +7,7 @@ import 'package:progate_womens/exhibit/goods.dart';
 import 'package:progate_womens/exhibit/root_data.dart';
 import 'package:progate_womens/stamp/stamp_service.dart';
 import 'package:progate_womens/logic/aquarium_logic.dart';
+import 'package:progate_womens/favorite/favorite_service.dart';
 
 const _uncollectedStampImagePath = 'lib/assets/images/stamps/fish.png';
 
@@ -21,6 +22,7 @@ class _StampListPageState extends State<StampListPage> {
   List<Exhibit> _exhibits = [];
   Map<String, Goods> _goodsById = {};
   Set<String> _collectedIds = {};
+  Set<String> _favoriteIds = {};
   bool _loading = true;
   String? _error;
 
@@ -52,6 +54,7 @@ class _StampListPageState extends State<StampListPage> {
       });
 
       final ids = await StampService.getCollectedIds();
+      final favorites = await FavoriteService.getFavorites();
 
       if (!mounted) return;
 
@@ -59,6 +62,7 @@ class _StampListPageState extends State<StampListPage> {
         _exhibits = rootData.exhibits;
         _goodsById = {for (final goods in rootData.goods) goods.id: goods};
         _collectedIds = ids.toSet();
+        _favoriteIds = favorites.toSet();
         _loading = false;
       });
     } catch (e) {
@@ -84,7 +88,10 @@ class _StampListPageState extends State<StampListPage> {
     return '¥$withComma';
   }
 
-  Widget _buildGoodsList(List<Goods> goodsList) {
+  Widget _buildGoodsList(
+    List<Goods> goodsList, {
+    VoidCallback? onFavoriteChanged,
+  }) {
     if (goodsList.isEmpty) {
       return const Text(
         '関連するグッズはありません',
@@ -113,7 +120,22 @@ class _StampListPageState extends State<StampListPage> {
             goodsName: goodsList[i].name,
             categoryLabel: goodsList[i].category,
             price: _formatYen(goodsList[i].price),
-            isSaved: false,
+            isSaved: _favoriteIds.contains(goodsList[i].id),
+            onSavePressed: () async {
+              final goodsId = goodsList[i].id;
+
+              if (_favoriteIds.contains(goodsId)) {
+                await FavoriteService.removeFavorite(goodsId);
+                _favoriteIds.remove(goodsId);
+              } else {
+                await FavoriteService.addFavorite(goodsId);
+                _favoriteIds.add(goodsId);
+              }
+
+              if (!mounted) return;
+              setState(() {});
+              onFavoriteChanged?.call();
+            },
           ),
           if (i != goodsList.length - 1) const SizedBox(height: 8),
         ],
@@ -130,22 +152,29 @@ class _StampListPageState extends State<StampListPage> {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return CreatureDialog(
-          stamp: StampComponent(
-            size: 240,
-            isActive: collected,
-            image: Image.asset(
-              exhibit.stampImage,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  Image.asset(_uncollectedStampImagePath),
-            ),
-          ),
-          name: _shortName(exhibit.name),
-          detail: exhibit.description,
-          goodsTitle: 'この生き物に関するグッズ',
-          itemComponent: _buildGoodsList(linkedGoods),
-          onClose: () => Navigator.of(dialogContext).pop(),
+        return StatefulBuilder(
+          builder: (context, setInnerState) {
+            return CreatureDialog(
+              stamp: StampComponent(
+                size: 240,
+                isActive: collected,
+                image: Image.asset(
+                  exhibit.stampImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                      Image.asset(_uncollectedStampImagePath),
+                ),
+              ),
+              name: _shortName(exhibit.name),
+              detail: exhibit.description,
+              goodsTitle: 'この生き物に関するグッズ',
+              itemComponent: _buildGoodsList(
+                linkedGoods,
+                onFavoriteChanged: () => setInnerState(() {}),
+              ),
+              onClose: () => Navigator.of(dialogContext).pop(),
+            );
+          },
         );
       },
     );
