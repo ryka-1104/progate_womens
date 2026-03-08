@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:progate_womens/creature_dialog.dart';
 import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/component/stamp_component.dart';
+import 'package:progate_womens/stamp/stamp_service.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
@@ -100,7 +101,10 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
   }
 
   /// ダイアログ表示
-  void showCreatureDialog(Map<String, dynamic> exhibit) {
+  void showCreatureDialog(Map<String, dynamic> exhibit) async {
+    // スタンプを即座に保存
+    await StampService.addStamp(exhibit["id"]);
+
     List goodsIds = exhibit["linked_goods_ids"] ?? [];
 
     final goodsList = findGoods(goodsIds);
