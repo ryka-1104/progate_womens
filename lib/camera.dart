@@ -4,6 +4,7 @@ import 'package:progate_womens/creature_dialog.dart';
 import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/component/stamp_component.dart';
 import 'package:progate_womens/stamp/stamp_service.dart';
+import 'package:progate_womens/favorite/favorite_service.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
@@ -28,10 +29,21 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
   List<dynamic> goods = [];
   List<dynamic> attributes = [];
 
+  Set<String> favoriteIds = {};
+
   @override
   void initState() {
     super.initState();
     loadData();
+    loadFavorites();
+  }
+
+  Future<void> loadFavorites() async {
+    final favs = await FavoriteService.getFavorites();
+    if (!mounted) return;
+    setState(() {
+      favoriteIds = favs.toSet();
+    });
   }
 
   /// JSON読み込み
@@ -76,14 +88,20 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
     return result;
   }
 
-  /// グッズUI
-  Widget buildGoodsList(List<Map<String, dynamic>> goodsList) {
+  /// グッズUI（お気に入り対応）
+  Widget buildGoodsList(
+    List<Map<String, dynamic>> goodsList, {
+    VoidCallback? onFavoriteChanged,
+  }) {
     if (goodsList.isEmpty) {
       return const Text("関連グッズなし");
     }
 
     return Column(
       children: goodsList.map((g) {
+        final gId = g["id"] as String;
+        final isSaved = favoriteIds.contains(gId);
+
         return GoodsListComponent(
           photo: Image.asset(
             g["image"],
@@ -92,9 +110,21 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
             fit: BoxFit.cover,
           ),
           goodsName: g["name"],
-          categoryLabel: g["category"],
+          categoryLabel: g["category"] ?? "",
           price: "¥${g["price"]}",
-          isSaved: false,
+          isSaved: isSaved,
+          onSavePressed: () async {
+            if (favoriteIds.contains(gId)) {
+              await FavoriteService.removeFavorite(gId);
+              favoriteIds.remove(gId);
+            } else {
+              await FavoriteService.addFavorite(gId);
+              favoriteIds.add(gId);
+            }
+            await loadFavorites();
+            setState(() {});
+            onFavoriteChanged?.call();
+          },
         );
       }).toList(),
     );
@@ -112,26 +142,28 @@ class _QRScanOnlyPageState extends State<QRScanOnlyPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return CreatureDialog(
-          stamp: StampComponent(
-            size: 220,
-            isActive: true,
-            image: Image.asset(exhibit["stamp_image"], fit: BoxFit.contain),
-          ),
-
-          name: exhibit["name"],
-
-          detail: exhibit["description"],
-
-          goodsTitle: "この生き物のグッズ",
-
-          itemComponent: buildGoodsList(goodsList),
-          onClose: () {
-            Navigator.pop(context);
-
-            setState(() {
-              _detected = false;
-            });
+        return StatefulBuilder(
+          builder: (context, setInnerState) {
+            return CreatureDialog(
+              stamp: StampComponent(
+                size: 220,
+                isActive: true,
+                image: Image.asset(exhibit["stamp_image"], fit: BoxFit.contain),
+              ),
+              name: exhibit["name"],
+              detail: exhibit["description"],
+              goodsTitle: "この生き物のグッズ",
+              itemComponent: buildGoodsList(
+                goodsList,
+                onFavoriteChanged: () => setInnerState(() {}),
+              ),
+              onClose: () {
+                Navigator.pop(context);
+                setState(() {
+                  _detected = false;
+                });
+              },
+            );
           },
         );
       },
