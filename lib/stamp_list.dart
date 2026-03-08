@@ -1,18 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:progate_womens/component/list_component.dart';
 import 'package:progate_womens/component/stamp_component.dart';
 import 'package:progate_womens/creature_dialog.dart';
 import 'package:progate_womens/exhibit/exhibit.dart';
 import 'package:progate_womens/exhibit/goods.dart';
 import 'package:progate_womens/exhibit/root_data.dart';
 import 'package:progate_womens/stamp/stamp_service.dart';
-
-Future<Map<String, dynamic>> _loadAquariumJson() async {
-  final data = await rootBundle.loadString('lib/aquarium.json');
-  return jsonDecode(data) as Map<String, dynamic>;
-}
+import 'package:progate_womens/logic/aquarium_logic.dart';
 
 /// 未収集スタンプ用の魚画像パス。
 /// `lib/assets/images/stamps/fish.png` を表示します。
@@ -46,10 +39,12 @@ class _StampListPageState extends State<StampListPage> {
       _loading = true;
       _error = null;
     });
+
     try {
       final json = await _loadAquariumJson();
       final rootData = RootData.fromJson(json);
       final ids = await StampService.getCollectedIds();
+
       setState(() {
         _exhibits = rootData.exhibits;
         _goodsById = {for (final goods in rootData.goods) goods.id: goods};
@@ -155,47 +150,43 @@ class _StampListPageState extends State<StampListPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE3F2FD),
-              Color(0xFFBBDEFB),
-              Color(0xFF90CAF9),
-            ],
+            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB), Color(0xFF90CAF9)],
           ),
         ),
         child: SafeArea(
           child: _loading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? Center(
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      '読み込みに失敗しました: $_error',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                         child: Text(
-                          '読み込みに失敗しました: $_error',
+                          '集めた生き物たち',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey.shade800,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    )
-                  : CustomScrollView(
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                            child: Text(
-                              '集めた生き物たち',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.grey.shade800,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          sliver: SliverGrid(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
                               mainAxisSpacing: 16,
                               crossAxisSpacing: 16,
@@ -227,6 +218,9 @@ class _StampListPageState extends State<StampListPage> {
                         ),
                       ],
                     ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  ],
+                ),
         ),
       ),
     );
@@ -271,9 +265,7 @@ class _StampGridItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: collected
-                ? Colors.grey.shade800
-                : Colors.grey.shade500,
+            color: collected ? Colors.grey.shade800 : Colors.grey.shade500,
           ),
           textAlign: TextAlign.center,
           maxLines: 1,
@@ -284,9 +276,6 @@ class _StampGridItem extends StatelessWidget {
   }
 
   Widget _placeholderImage() {
-    return Image.asset(
-      _uncollectedStampImagePath,
-      fit: BoxFit.cover,
-    );
+    return Image.asset(_uncollectedStampImagePath, fit: BoxFit.cover);
   }
 }
